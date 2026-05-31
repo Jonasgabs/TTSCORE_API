@@ -32,6 +32,11 @@ public class UserController {
         return ResponseEntity.ok(userService.search(q));
     }
 
+    @GetMapping("/ranking")
+    public ResponseEntity<List<UserResponse>> getRanking() {
+        return ResponseEntity.ok(userService.getRanking());
+    }
+
     @PutMapping("/me")
     public ResponseEntity<UserResponse> updateProfile(@AuthenticationPrincipal User user,
                                                       @Valid @RequestBody UpdateProfileRequest request) {

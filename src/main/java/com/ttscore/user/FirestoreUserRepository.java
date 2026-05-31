@@ -89,6 +89,20 @@ public class FirestoreUserRepository implements UserRepository {
         }
     }
 
+    @Override
+    public List<User> findAllOrderedByWins() {
+        try {
+            var snapshot = firestore.collection(COLLECTION)
+                    .orderBy("wins", com.google.cloud.firestore.Query.Direction.DESCENDING)
+                    .get().get();
+            return snapshot.getDocuments().stream()
+                    .map(d -> fromDoc(d.getId(), d.getData()))
+                    .toList();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Error fetching ranking", e);
+        }
+    }
+
     private Map<String, Object> toMap(User user) {
         Map<String, Object> map = new HashMap<>();
         map.put("username", user.getUsername());
@@ -96,10 +110,14 @@ public class FirestoreUserRepository implements UserRepository {
         map.put("password", user.getPassword());
         map.put("avatarUrl", user.getAvatarUrl());
         map.put("createdAt", user.getCreatedAt());
+        map.put("wins", user.getWins());
+        map.put("losses", user.getLosses());
         return map;
     }
 
     private User fromDoc(String id, Map<String, Object> data) {
+        Number wins = (Number) data.getOrDefault("wins", 0);
+        Number losses = (Number) data.getOrDefault("losses", 0);
         return User.builder()
                 .id(id)
                 .username((String) data.get("username"))
@@ -107,6 +125,8 @@ public class FirestoreUserRepository implements UserRepository {
                 .password((String) data.get("password"))
                 .avatarUrl((String) data.get("avatarUrl"))
                 .createdAt((Date) data.get("createdAt"))
+                .wins(wins.intValue())
+                .losses(losses.intValue())
                 .build();
     }
 }

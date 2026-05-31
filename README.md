@@ -15,6 +15,7 @@ REST API para o app de ping pong TTScore, construída com **Java 21 + Spring Boo
   - [Usuários](#usuários)
   - [Partidas](#partidas)
   - [Amizades](#amizades)
+  - [Ranking](#ranking)
 - [Rodando Localmente com Android Studio](#rodando-localmente-com-android-studio)
 - [Respostas de Erro](#respostas-de-erro)
 
@@ -220,7 +221,9 @@ Authorization: Bearer <token>
   "username": "joao123",
   "email": "joao@email.com",
   "avatarUrl": "https://...",
-  "createdAt": "2024-01-15T10:30:00.000+00:00"
+  "createdAt": "2024-01-15T10:30:00.000+00:00",
+  "wins": 10,
+  "losses": 4
 }
 ```
 
@@ -242,7 +245,9 @@ Authorization: Bearer <token>
   "username": "joao123",
   "email": "joao@email.com",
   "avatarUrl": null,
-  "createdAt": "2024-01-15T10:30:00.000+00:00"
+  "createdAt": "2024-01-15T10:30:00.000+00:00",
+  "wins": 10,
+  "losses": 4
 }
 ```
 
@@ -265,7 +270,9 @@ Authorization: Bearer <token>
     "username": "joao123",
     "email": "joao@email.com",
     "avatarUrl": null,
-    "createdAt": "2024-01-15T10:30:00.000+00:00"
+    "createdAt": "2024-01-15T10:30:00.000+00:00",
+    "wins": 10,
+    "losses": 4
   }
 ]
 ```
@@ -297,8 +304,47 @@ Authorization: Bearer <token>
   "username": "novo_nome",
   "email": "joao@email.com",
   "avatarUrl": "https://exemplo.com/foto.png",
-  "createdAt": "2024-01-15T10:30:00.000+00:00"
+  "createdAt": "2024-01-15T10:30:00.000+00:00",
+  "wins": 10,
+  "losses": 4
 }
+```
+
+---
+
+### Ranking
+
+#### Listar ranking global
+
+Retorna todos os usuários ordenados por número de vitórias (decrescente).
+
+```
+GET /api/users/ranking
+Authorization: Bearer <token>
+```
+
+**Resposta 200:**
+```json
+[
+  {
+    "id": "a1b2c3d4-...",
+    "username": "joao123",
+    "email": "joao@email.com",
+    "avatarUrl": null,
+    "createdAt": "2024-01-15T10:30:00.000+00:00",
+    "wins": 15,
+    "losses": 3
+  },
+  {
+    "id": "b2c3d4e5-...",
+    "username": "maria456",
+    "email": "maria@email.com",
+    "avatarUrl": null,
+    "createdAt": "2024-01-10T08:00:00.000+00:00",
+    "wins": 10,
+    "losses": 5
+  }
+]
 ```
 
 ---
@@ -317,14 +363,14 @@ Authorization: Bearer <token>
 **Body:**
 ```json
 {
-  "opponentId": "b2c3d4e5-...",
+  "opponentUsername": "maria456",
   "player1Score": 11,
   "player2Score": 8
 }
 ```
 
 **Validações:**
-- `opponentId`: obrigatório
+- `opponentUsername`: obrigatório, deve ser um username cadastrado
 - `player1Score`: obrigatório, >= 0
 - `player2Score`: obrigatório, >= 0
 
@@ -337,14 +383,18 @@ Authorization: Bearer <token>
     "username": "joao123",
     "email": "joao@email.com",
     "avatarUrl": null,
-    "createdAt": "2024-01-15T10:30:00.000+00:00"
+    "createdAt": "2024-01-15T10:30:00.000+00:00",
+    "wins": 6,
+    "losses": 2
   },
   "player2": {
     "id": "b2c3d4e5-...",
     "username": "maria456",
     "email": "maria@email.com",
     "avatarUrl": null,
-    "createdAt": "2024-01-10T08:00:00.000+00:00"
+    "createdAt": "2024-01-10T08:00:00.000+00:00",
+    "wins": 10,
+    "losses": 5
   },
   "player1Score": 11,
   "player2Score": 8,
@@ -369,11 +419,11 @@ Authorization: Bearer <token>
 #### Partidas de um usuário
 
 ```
-GET /api/matches/user/{userId}
+GET /api/matches/user/{username}
 Authorization: Bearer <token>
 ```
 
-**Path param:** `userId` — ID do usuário
+**Path param:** `username` — username do usuário
 
 **Resposta 200:** array de `MatchResponse`.
 
@@ -393,7 +443,7 @@ Authorization: Bearer <token>
 #### Histórico frente a frente (head-to-head)
 
 ```
-GET /api/matches/versus/{opponentId}
+GET /api/matches/versus/{opponentUsername}
 Authorization: Bearer <token>
 ```
 
@@ -648,6 +698,6 @@ Todas as respostas de erro seguem o mesmo formato:
 
 | Coleção | Campos |
 |---|---|
-| `users` | `username`, `email`, `password`, `avatarUrl`, `createdAt` |
+| `users` | `username`, `email`, `password`, `avatarUrl`, `createdAt`, `wins`, `losses` |
 | `matches` | `player1Id`, `player2Id`, `player1Score`, `player2Score`, `winnerId`, `playedAt` |
 | `friendships` | `requesterId`, `addresseeId`, `status`, `createdAt` |

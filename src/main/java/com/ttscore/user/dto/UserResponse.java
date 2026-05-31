@@ -9,7 +9,9 @@ public record UserResponse(
         String username,
         String email,
         String avatarUrl,
-        Date createdAt
+        Date createdAt,
+        int wins,
+        int losses
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -17,7 +19,9 @@ public record UserResponse(
                 user.getUsername(),
                 user.getEmail(),
                 user.getAvatarUrl(),
-                user.getCreatedAt()
+                user.getCreatedAt(),
+                user.getWins(),
+                user.getLosses()
         );
     }
 }

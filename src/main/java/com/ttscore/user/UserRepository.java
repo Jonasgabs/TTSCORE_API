@@ -18,4 +18,6 @@ public interface UserRepository {
     boolean existsByEmail(String email);
 
     List<User> searchByUsername(String query);
+
+    List<User> findAllOrderedByWins();
 }

@@ -42,8 +42,32 @@ public class UserService {
         return UserResponse.from(userRepository.save(user));
     }
 
+    public List<UserResponse> getRanking() {
+        return userRepository.findAllOrderedByWins()
+                .stream()
+                .map(UserResponse::from)
+                .toList();
+    }
+
     public User findOrThrow(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", id));
+    }
+
+    public User findOrThrowByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", username));
+    }
+
+    public void incrementWins(String userId) {
+        User user = findOrThrow(userId);
+        user.setWins(user.getWins() + 1);
+        userRepository.save(user);
+    }
+
+    public void incrementLosses(String userId) {
+        User user = findOrThrow(userId);
+        user.setLosses(user.getLosses() + 1);
+        userRepository.save(user);
     }
 }

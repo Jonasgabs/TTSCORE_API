@@ -31,9 +31,9 @@ public class MatchController {
         return ResponseEntity.ok(matchService.getByUser(user.getId()));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<MatchResponse>> byUser(@PathVariable String userId) {
-        return ResponseEntity.ok(matchService.getByUser(userId));
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<MatchResponse>> byUser(@PathVariable String username) {
+        return ResponseEntity.ok(matchService.getByUsername(username));
     }
 
     @GetMapping("/{id}")
@@ -41,9 +41,9 @@ public class MatchController {
         return ResponseEntity.ok(matchService.getById(id));
     }
 
-    @GetMapping("/versus/{opponentId}")
+    @GetMapping("/versus/{opponentUsername}")
     public ResponseEntity<List<MatchResponse>> versus(@AuthenticationPrincipal User user,
-                                                      @PathVariable String opponentId) {
-        return ResponseEntity.ok(matchService.getByBothPlayers(user.getId(), opponentId));
+                                                      @PathVariable String opponentUsername) {
+        return ResponseEntity.ok(matchService.getByBothPlayersViaUsername(user.getId(), opponentUsername));
     }
 }

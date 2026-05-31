@@ -18,18 +18,22 @@ public class MatchService {
     private final UserService userService;
 
     public MatchResponse create(String currentUserId, MatchRequest request) {
+        String opponentId = userService.findOrThrowByUsername(request.opponentUsername()).getId();
         String winnerId = request.player1Score() > request.player2Score()
-                ? currentUserId : request.opponentId();
+                ? currentUserId : opponentId;
+        String loserId = winnerId.equals(currentUserId) ? opponentId : currentUserId;
 
         Match match = Match.builder()
                 .player1Id(currentUserId)
-                .player2Id(request.opponentId())
+                .player2Id(opponentId)
                 .player1Score(request.player1Score())
                 .player2Score(request.player2Score())
                 .winnerId(winnerId)
                 .build();
 
         Match saved = matchRepository.save(match);
+        userService.incrementWins(winnerId);
+        userService.incrementLosses(loserId);
         return toResponse(saved);
     }
 
@@ -40,11 +44,21 @@ public class MatchService {
                 .toList();
     }
 
+    public List<MatchResponse> getByUsername(String username) {
+        String userId = userService.findOrThrowByUsername(username).getId();
+        return getByUser(userId);
+    }
+
     public List<MatchResponse> getByBothPlayers(String userId1, String userId2) {
         return matchRepository.findByBothPlayers(userId1, userId2)
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    public List<MatchResponse> getByBothPlayersViaUsername(String userId1, String opponentUsername) {
+        String opponentId = userService.findOrThrowByUsername(opponentUsername).getId();
+        return getByBothPlayers(userId1, opponentId);
     }
 
     public MatchResponse getById(String id) {
