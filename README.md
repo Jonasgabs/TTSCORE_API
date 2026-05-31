@@ -60,6 +60,10 @@ server.port=8080
 ### 3. Rodar o projeto
 
 ```bash
+./run.sh
+```
+OU
+```bash
 ./mvnw spring-boot:run
 ```
 
@@ -534,14 +538,24 @@ src/main/resources/firebase-service-account.json
 ### 2. Subir a API
 
 ```bash
+./run.sh
+```
+OU
+```bash
 ./mvnw spring-boot:run
 ```
 
 Quando aparecer a mensagem abaixo, a API está no ar:
 
 ```
-Started TtscoreApiApplication in 3.2 seconds
-Tomcat started on port 8080
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+Started TtscoreApiApplication in 2.96 seconds (process running for 3.121)
 ```
 
 Teste rápido no terminal:
