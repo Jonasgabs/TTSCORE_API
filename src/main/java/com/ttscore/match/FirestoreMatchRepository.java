@@ -1,5 +1,6 @@
 package com.ttscore.match;
 
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.Firestore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -80,7 +81,14 @@ public class FirestoreMatchRepository implements MatchRepository {
                 .player1Score(((Long) data.get("player1Score")).intValue())
                 .player2Score(((Long) data.get("player2Score")).intValue())
                 .winnerId((String) data.get("winnerId"))
-                .playedAt((Date) data.get("playedAt"))
+                .playedAt(toDate(data.get("playedAt")))
                 .build();
+    }
+
+    private Date toDate(Object value) {
+        if (value == null) return null;
+        if (value instanceof Date d) return d;
+        if (value instanceof Timestamp t) return t.toDate();
+        return null;
     }
 }

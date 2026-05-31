@@ -5,6 +5,7 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import com.google.cloud.Timestamp;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -124,9 +125,16 @@ public class FirestoreUserRepository implements UserRepository {
                 .email((String) data.get("email"))
                 .password((String) data.get("password"))
                 .avatarUrl((String) data.get("avatarUrl"))
-                .createdAt((Date) data.get("createdAt"))
+                .createdAt(toDate(data.get("createdAt")))
                 .wins(wins.intValue())
                 .losses(losses.intValue())
                 .build();
+    }
+
+    private Date toDate(Object value) {
+        if (value == null) return null;
+        if (value instanceof Date d) return d;
+        if (value instanceof Timestamp t) return t.toDate();
+        return null;
     }
 }

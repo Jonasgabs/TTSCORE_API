@@ -1,5 +1,6 @@
 package com.ttscore.friendship;
 
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.Firestore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -95,7 +96,14 @@ public class FirestoreFriendshipRepository implements FriendshipRepository {
                 .requesterId((String) data.get("requesterId"))
                 .addresseeId((String) data.get("addresseeId"))
                 .status(FriendshipStatus.valueOf((String) data.get("status")))
-                .createdAt((Date) data.get("createdAt"))
+                .createdAt(toDate(data.get("createdAt")))
                 .build();
+    }
+
+    private Date toDate(Object value) {
+        if (value == null) return null;
+        if (value instanceof Date d) return d;
+        if (value instanceof Timestamp t) return t.toDate();
+        return null;
     }
 }
